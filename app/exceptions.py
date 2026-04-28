@@ -1,0 +1,2 @@
+class ToolRejected(Exception):
+    pass
