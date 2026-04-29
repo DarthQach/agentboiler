@@ -6,7 +6,7 @@ A FastAPI + Next.js starter template with PydanticAI agents, human-in-the-loop t
 
 ## What's Included
 
-- PydanticAI agent wired to FastAPI with configurable system prompt and model (default: claude-sonnet-4-5)
+- PydanticAI agent wired to FastAPI with configurable system prompt and model (default: claude-sonnet-4-6)
 - 3 stub tools ready to replace: `web_search`, `send_email`, `create_file`
 - Human-in-the-loop tool approval queue — every tool call requires explicit Approve/Reject before executing
 - Supabase persistence: sessions, tool_approvals, users, usage tables (schema.sql included)
@@ -68,7 +68,7 @@ Middleware checks users.plan + tool_call_count before every tool execution
 1. Clone the repo
 
    ```bash
-   git clone https://github.com/your-username/agentboiler.git
+   git clone https://github.com/DarthQach/agentboiler.git
    cd agentboiler
    ```
 
@@ -119,13 +119,13 @@ Middleware checks users.plan + tool_call_count before every tool execution
 ## How to Swap the Model
 
 - Open `app/.env`
-- Change `DEFAULT_MODEL` to your target model identifier
+- Change `AGENT_MODEL` to your target model identifier
 - Supported values:
-  - `claude-sonnet-4-5` (default)
-  - `claude-opus-4-5`
+  - `claude-sonnet-4-6` (default)
+  - `claude-opus-4-6`
   - `gpt-4o` (requires `OPENAI_API_KEY` set)
   - Any model string supported by PydanticAI
-- ⚠️ Note: AgentBoiler was built and tested against PydanticAI [pinned version in pyproject.toml]. The PydanticAI API is still evolving — check their changelog before upgrading.
+- ⚠️ Note: AgentBoiler was built and tested against PydanticAI 1.87.0. The PydanticAI API is still evolving — check their changelog before upgrading.
 
 ## How to Add a Real Tool
 
@@ -162,8 +162,13 @@ agentboiler/
 
 - Create two products in Stripe Dashboard: Starter ($29/mo) and Pro ($79/mo)
 - Copy each price ID into `app/.env` as `STRIPE_STARTER_PRICE_ID` and `STRIPE_PRO_PRICE_ID`
-- Create a webhook endpoint pointing to `YOUR_DOMAIN/billing/webhook`, subscribe to `checkout.session.completed` and `customer.subscription.deleted`
-- Copy the webhook signing secret into `app/.env` as `STRIPE_WEBHOOK_SECRET`
+- For local development, use Stripe CLI to forward webhooks:
+  `stripe listen --forward-to localhost:8000/billing/webhook`
+  Copy the printed webhook signing secret into STRIPE_WEBHOOK_SECRET in app/.env.
+- For production, create a webhook endpoint in the Stripe Dashboard pointing to
+  `https://your-domain.com/billing/webhook`, subscribe to
+  `checkout.session.completed` and `customer.subscription.deleted`,
+  and copy the signing secret into STRIPE_WEBHOOK_SECRET.
 - ⚠️ Webhook signature verification is enabled by default. Do not disable it — without it, anyone can spoof billing events.
 
 ## Customization

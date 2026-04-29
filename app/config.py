@@ -1,12 +1,20 @@
-from pydantic import Field
+from pathlib import Path
+
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+APP_ENV_FILE = Path(__file__).resolve().parent / ".env"
+
+
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=APP_ENV_FILE, extra="ignore")
 
     app_env: str = "development"
-    agent_model: str = "claude-haiku-4-5"
+    agent_model: str = Field(
+        default="claude-sonnet-4-6",
+        validation_alias=AliasChoices("AGENT_MODEL", "DEFAULT_MODEL"),
+    )
     agent_system_prompt: str = "You are a helpful assistant."
 
     # Blank-safe for the scaffold; required in production integration steps.
@@ -31,6 +39,7 @@ class Settings(BaseSettings):
     )
     approval_poll_interval: float = 1.0
     approval_timeout: float = 300.0
+    agent_max_tool_retries: int = 3
     openai_api_key: str = ""
     anthropic_api_key: str = ""
     stripe_secret_key: str = ""

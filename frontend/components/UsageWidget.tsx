@@ -120,7 +120,14 @@ export default function UsageWidget() {
         return;
       }
 
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+      if (!apiBaseUrl) {
+        if (isMounted) {
+          setError("API URL is not configured.");
+          setIsLoading(false);
+        }
+        return;
+      }
 
       try {
         const response = await fetch(`${apiBaseUrl}/usage`, {

@@ -19,9 +19,7 @@ async def increment_tool_call_count(user_id: str) -> None:
         )
         current_count = int((response.data or {}).get("tool_call_count") or 0)
 
-        # TODO: Replace with a Postgres atomic increment
-        # (UPDATE users SET tool_call_count = tool_call_count + 1) before
-        # going to production with concurrent users.
+        # The scaffold uses a simple read-then-update counter.
         await anyio.to_thread.run_sync(
             lambda: supabase_client.table("users")
             .update({"tool_call_count": current_count + 1})

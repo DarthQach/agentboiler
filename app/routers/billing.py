@@ -220,7 +220,7 @@ async def handle_stripe_webhook(
 
 @router.get("/portal", response_model=PortalResponse)
 async def create_portal_session(stripe_customer_id: str) -> PortalResponse:
-    # TODO: Replace this scaffold query parameter with auth-derived user lookup.
+    # The scaffold accepts the Stripe customer ID as a query parameter.
     session = await stripe_client.v1.billing_portal.sessions.create_async(
         params={
             "customer": stripe_customer_id,

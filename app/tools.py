@@ -27,7 +27,7 @@ async def _require_approval(
         .execute()
     )
     rejection_count = rejection_response.count or 0
-    if rejection_count >= 3:
+    if rejection_count >= settings.agent_max_tool_retries:
         raise ToolRejected("max rejections reached")
 
     approval_response = await anyio.to_thread.run_sync(
